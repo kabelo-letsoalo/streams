@@ -1,11 +1,12 @@
-{application, query,
+{application, ask,
  [{description, "An OTP application"},
   {vsn, "0.1.0"},
   {registered, []},
-  {mod, { query_app, []}},
+  {mod, { ask_app, []}},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    cowboy
    ]},
   {env,[]},
   {modules, []},

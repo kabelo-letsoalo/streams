@@ -1,9 +1,9 @@
 %%%-------------------------------------------------------------------
-%% @doc query top level supervisor.
+%% @doc ask top level supervisor.
 %% @end
 %%%-------------------------------------------------------------------
 
--module(query_sup).
+-module(ask_sup).
 
 -behaviour(supervisor).
 
