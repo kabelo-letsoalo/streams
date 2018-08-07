@@ -11,7 +11,7 @@
 
 %% Application callbacks
 start(_StartType, _StartArgs) ->
-    start_server(),
+    start_http_server(),
     ask_sup:start_link().
 
 stop(_State) ->
@@ -22,7 +22,7 @@ list_all_playlists() ->
     file:list_dir_all("/home/kb/Music/playlists").
 
 %% Internal functions
-start_server() ->
+start_http_server() ->
     Dispatch = cowboy_router:compile([
 		{'_', [
 			{"/", ask_handler, []}
