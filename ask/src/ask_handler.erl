@@ -6,19 +6,19 @@
 -module(ask_handler).
 
 -export([init/2]).
+-export([content_types_provided/2]).
+-export([all_playlists/2]).
 
-init(Req0, Opts) ->
-	Method = cowboy_req:method(Req0),
-	#{echo := Echo} = cowboy_req:match_qs([{echo, [], undefined}], Req0),
-	Req = echo(Method, Echo, Req0),
-	{ok, Req, Opts}.
+init(Req, Opts) ->
+	{cowboy_rest, Req, Opts}.
 
-echo(<<"GET">>, undefined, Req) ->
-	cowboy_req:reply(400, #{}, <<"Missing echo parameter.">>, Req);
-echo(<<"GET">>, Echo, Req) ->
-	cowboy_req:reply(200, #{
-		<<"content-type">> => <<"text/plain; charset=utf-8">>
-	}, Echo, Req);
-echo(_, _, Req) ->
-	%% Method not allowed.
-	cowboy_req:reply(405, Req).
+content_types_provided(Req, State) ->
+	{[{<<"text/plain">>, all_playlists}], Req, State}.
+
+all_playlists(Req, State) ->
+	{parse_resp("", 1, ask_app:list_all_playlists()), Req, State}.
+
+
+parse_resp(_, _, {error, Reason}) -> Reason;
+parse_resp(Resp, I, {ok, Filenames}) when I == length(Filenames) -> Resp;
+parse_resp(Resp, I, {ok, Filenames}) when I /= length(Filenames) -> parse_resp(Resp  ++ "," ++ Resp, I + 1, {ok, Filenames}).
