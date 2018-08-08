@@ -19,10 +19,10 @@ playlist(N) ->
 
 home_dir() -> "/home/kb/Music/playlists/".
 
-read_lines(Lines, IoDevice) ->
+read_lines(Acc, IoDevice) ->
     {S, Data} = file:read_line(IoDevice),
     case S of
         error -> {S, Data};
-        eof -> io:format(Lines),Lines;
-        ok -> read_lines(Lines ++ Data ++ ",", IoDevice)
+        eof -> Acc;
+        ok -> read_lines(Acc ++ Data ++ ",", IoDevice)
     end.

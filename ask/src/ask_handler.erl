@@ -31,5 +31,5 @@ handle_response({error, Reason}, Req, State) -> {parse_resp({error, Reason}), Re
 handle_response({ok, Filenames}, Req, State) -> {parse_resp(Filenames, ""), Req, State}.
 
 parse_resp({error, _Reason}) -> "Server error".
-parse_resp([], RespTxt) -> RespTxt;
-parse_resp([H|T], RespTxt) -> parse_resp(T, RespTxt ++ H ++ ",").
+parse_resp([], Acc) -> Acc;
+parse_resp([H|T], Acc) -> parse_resp(T, Acc ++ H ++ ",").
