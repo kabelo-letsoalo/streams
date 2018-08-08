@@ -19,7 +19,7 @@ stop(_State) ->
 start_http_server() ->
     Dispatch = cowboy_router:compile([
 		{'_', [
-			{"/playlists/[:name]", ask_handler, [{op, list}]}
+			{"/playlists/[:name]", ask_handler, [{op, get}]}
 		]}
 	]),
 	{ok, _} = cowboy:start_clear(http, [{port, 3000}], #{

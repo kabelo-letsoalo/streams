@@ -6,7 +6,7 @@
 -module(ask_handler).
 
 -export([init/2,content_types_provided/2]).
--export([list/2]).
+-export([get/2]).
 
 -record(state, {op, response}).
 
@@ -17,14 +17,14 @@ init(Req, Opts) ->
 
 content_types_provided(Req, State) ->
 	{[
-		{<<"text/plain">>, list}
+		{<<"text/plain">>, get}
 	], Req, State}.
 
-list(Req, State) when State#state.op == list ->
+get(Req, State) when State#state.op == get ->
 	N = cowboy_req:binding(name, Req),
 	case N of
-		undefined -> handle_response(ask_api:playlist(), Req, State);
-		_ -> handle_response(ask_api:playlist(N), Req, State)
+		_ -> handle_response(ask_api:playlist(N), Req, State);
+		undefined -> handle_response(ask_api:playlist(), Req, State)
 	end.
 
 handle_response({error, Reason}, Req, State) -> {parse_resp({error, Reason}), Req, State};
