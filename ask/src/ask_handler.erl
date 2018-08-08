@@ -16,9 +16,13 @@ content_types_provided(Req, State) ->
 	{[{<<"text/plain">>, all_playlists}], Req, State}.
 
 all_playlists(Req, State) ->
-	{parse_resp("", 1, ask_app:list_all_playlists()), Req, State}.
+	{Status, Content} = ask_app:list_all_playlists("/home/kb/Music/playlists"),
+	case Status == error of
+		true -> {parse_resp(), Req, State};
+		false -> {parse_resp(Content, ""), Req, State}
+	end.
 
 
-parse_resp(_, _, {error, Reason}) -> Reason;
-parse_resp(Resp, I, {ok, Filenames}) when I == length(Filenames) -> Resp;
-parse_resp(Resp, I, {ok, Filenames}) when I /= length(Filenames) -> parse_resp(Resp  ++ "," ++ Resp, I + 1, {ok, Filenames}).
+parse_resp() -> "Server error".
+parse_resp([], Msg) -> Msg;
+parse_resp([H|T], Msg) -> parse_resp(T, Msg ++ H ++ ",").

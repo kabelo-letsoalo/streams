@@ -7,7 +7,7 @@
 -import(file,[list_dir_all/1]).
 
 -behaviour(application).
--export([start/2, stop/1, list_all_playlists/0]).
+-export([start/2, stop/1, list_all_playlists/1]).
 
 %% Application callbacks
 start(_StartType, _StartArgs) ->
@@ -18,8 +18,8 @@ stop(_State) ->
     ok.
 
 % API
-list_all_playlists() ->
-    file:list_dir_all("/home/kb/Music/playlists").
+list_all_playlists(Playlist) ->
+    file:list_dir_all(Playlist).
 
 %% Internal functions
 start_http_server() ->
