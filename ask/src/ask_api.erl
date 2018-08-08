@@ -8,21 +8,26 @@
 
 % API
 playlist() ->
-    file:list_dir_all(home_dir()).
-
-playlist(N) ->
-    {S, IoDevice} = file:open(home_dir() ++ N, [read]),
-    case S of
-        error -> {S, IoDevice};
-        ok -> read_lines("", IoDevice)
+    case playlist_dir() of
+        {error, R} -> {error, R};
+        {ok, Dir} -> file:list_dir_all(Dir)
     end.
 
-home_dir() -> "/home/kb/Music/playlists/".
+playlist(N) ->
+    case playlist_dir() of
+        {error, R} -> {error, R};
+        {ok, Dir} -> read_lines("", file:open(Dir ++ binary_to_list(N), [read]))
+    end.
 
-read_lines(Acc, IoDevice) ->
-    {S, Data} = file:read_line(IoDevice),
-    case S of
-        error -> {S, Data};
+playlist_dir() ->
+    case file:get_cwd() of
+        {error, R} -> {error, R};
+        {ok, Dir} -> {ok, Dir ++ "/resource/playlists/"}
+    end.
+
+read_lines(Acc, {_, IoDevice}) ->
+    case file:read_line(IoDevice) of
         eof -> Acc;
-        ok -> read_lines(Acc ++ Data ++ ",", IoDevice)
+        {error, R} -> {error, R};
+        {ok, Line} -> read_lines(Acc ++ Line ++ ",", {ok, IoDevice})
     end.
